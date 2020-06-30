@@ -3,7 +3,6 @@
 @section('content')
     <div class="container">
         <h1>Archive</h1>
-
         <table>
             <thead>
                 <tr>
@@ -16,20 +15,20 @@
             </thead>
             <tbody>
                 @foreach ($posts as $post)
-            <tr>
-                <td>{{ $post->id }}<td/>
-                <td>{{ $post->title }}</td>
-                <td>{{ $post->body }}</td>
-                <td>{{ $post->created_at}}</td>
-                <td>{{ $post->updated_at }}</td>
-                <td>
-                    <a href="{{ route('admin.posts.show', $post->id) }}">Show</a>
-                </td>
-                <td>
-                    <a href="{{ route('admin.posts.edit', $post->id) }}">Edit</a>
-                </td>
-            </tr>
-        @endforeach
+                    <tr>
+                        <td>{{ $post->id }}<td/>
+                        <td>{{ $post->title }}</td>
+                        <td>{{ $post->body }}</td>
+                        <td>{{ $post->created_at}}</td>
+                        <td>{{ $post->updated_at }}</td>
+                        <td>
+                            <a href="{{ route('admin.posts.show', $post->id) }}">Show</a>
+                        </td>
+                        <td>
+                            <a href="{{ route('admin.posts.edit', $post->id) }}">Edit</a>
+                        </td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
 

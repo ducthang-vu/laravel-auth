@@ -4,7 +4,7 @@
     <div class="container">
         <h1>Edit {{ $post->title }}</h1>
 
-        <form action="{{ route('admin.posts.update', $post->id) }}" method="POST">
+        <form action="{{ route('admin.posts.update', $post->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PATCH')
 
@@ -21,7 +21,7 @@
                 @isset($post->path_id)
                     <img src="{{ asset('storage/') . $post->path_img}}" alt="" width="200">
                 @endisset
-                <input id="path_id" name="path_id" type="file" id="img" accept="image/*">
+                <input id="path_img" name="path_img" type="file" id="img" accept="image/*">
             </div>
             <input type="submit" value="Edit">
         </form>

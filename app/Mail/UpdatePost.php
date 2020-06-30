@@ -8,13 +8,11 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use App\Post;
 
-class NewPost extends Mailable
+class UpdatePost extends Mailable
 {
     use Queueable, SerializesModels;
 
     private $post;
-
-
     /**
      * Create a new message instance.
      *
@@ -32,10 +30,9 @@ class NewPost extends Mailable
      */
     public function build()
     {
-        return $this->from('mysite@test.com')->subject('New post published')->view('mail.new_post')->with(
+        return $this->from('tizioCaio@mail.com')->subject('New post updated' . $this->post->title)->view('mail.update_post')->with(
             [
-                'title' => $this->post->title,
-                'slug' =>$this->post->slug
+                'title' => $this->post->title
             ]
         );
     }

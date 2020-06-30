@@ -23,7 +23,7 @@
                 <td>{{ $post->created_at}}</td>
                 <td>{{ $post->updated_at }}</td>
                 <td>
-                    <a href="{{ route('admin.posts.show', $post->id) }}">Editw</a>
+                    <a href="{{ route('admin.posts.edit', $post->id) }}">Edit</a>
                 </td>
                 <td>
                     <a href="{{ route('admin.posts.show', $post->id) }}">Deleted</a>

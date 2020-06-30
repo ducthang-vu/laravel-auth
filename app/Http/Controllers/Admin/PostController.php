@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NewPost;
+use App\Mail\UpdatePost;
 
 
 class PostController extends Controller
@@ -47,13 +48,11 @@ class PostController extends Controller
         $request->validate($this->validationRules());
 
         $data = $request->all();
-
         $data['user_id'] = Auth::id();
         $data['slug'] = Str::slug($data['title'], '-');
 
-        // set images
-        if(!empty($data['path_img'])) {
-            $data['path_img'] = Storage::disk('public')->put('image', $data['path_img']);
+        if(isset($data['img_path'])) {
+            $data['path_img'] = Storage::disk('public')->put('images', $data['path_img']);
         }
 
         $newPost = new Post();
@@ -61,7 +60,7 @@ class PostController extends Controller
         $saved = $newPost->save();
 
         if($saved) {
-            Mail::to('user@text.it')->send(new NewPost($newPost));
+            Mail::to('test@test.com')->send(new Newpost($newPost));
             return redirect()->route('admin.posts.show', $newPost->id);
         }
     }
@@ -102,19 +101,21 @@ class PostController extends Controller
         $data = $request->all();
         $data['slug'] = Str::slug($data['title'], '-');
 
-        if(!empty($data['path_img'])){
-            if (!empty($post->path_img)) {
-                Storage::disk('public')->delete($post->path_img);
-            }
-
-            $data['data_img'] = Storage::disk('public')->put('images', $data['path_img']);
+        if (!empty($post->image) && isset($data['del_image'])) {
+            Storage::disk('public')->delete($post->image);
         }
 
-
+        if (!empty($data['path_img'])) {
+            if(!empty($post->image)) {
+                Storage::disk('public')->delete($post->image);
+            }
+            $data['path_img'] = Storage::disk('public')->put('images', $data['path_img']);
+        }
 
         $updated = $post->update($data);
 
         if($updated) {
+            Mail::to('user@text.it')->send(new UpdatePost($post));
             return redirect()->route('admin.posts.show', $post->id);
         }
     }
