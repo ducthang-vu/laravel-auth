@@ -31,6 +31,11 @@
             </tr>
             </tbody>
         </table>
-        
+
+        @if(!empty($post->path_img))
+            <img src="{{ asset('storage/' . $post->path_img) }}" alt="{{  $post->title}}">
+        @else
+            <div class="no-img-text">No image for this post</div>
+        @endif
     </div>
 @endsection
