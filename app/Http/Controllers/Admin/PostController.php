@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Post;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
 
 class PostController extends Controller
 {
@@ -17,7 +20,7 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::where('user_id', Auth::id())->orderBy('created_at','desc')->paginate(5);
-        
+
         return view('admin.posts.index', compact('posts'));
     }
 
@@ -43,15 +46,19 @@ class PostController extends Controller
 
         $data = $request->all();
 
-        $data->user_id = Auth::id(); //could also be $data['user_id']
-        $data->slug = Str::slug($data->title, '-');
-        
+        $data['user_id'] = Auth::id();
+        $data['slug'] = Str::slug($data['title'], '-');
+
+        // set images
+        if(!empty($data['path_img'])) {
+            $data['path_img'] = Storage::disk('public')->put('image', $data['path_img']);
+        }
+
         $newPost = new Post();
-
         $newPost->fill($data);
-        $isSaved = $newPost->save();
+        $saved = $newPost->save();
 
-        if ($saved){
+        if($saved) {
             return redirect()->route('admin.posts.show', $newPost->id);
         }
     }
@@ -90,10 +97,11 @@ class PostController extends Controller
         $request->validate($this->validationRules());
 
         $data = $request->all();
-        $data->slug = Str::slug($data->title, '-');
-        $isUpdated = $post->update($data);
 
-        if ($isUpdated){
+        $data['slug'] = Str::slug($data['title'], '-');
+        $updated = $post->update($data);
+
+        if($updated) {
             return redirect()->route('admin.posts.show', $post->id);
         }
     }
@@ -111,8 +119,9 @@ class PostController extends Controller
 
     private function validationRules(){
         return [
-            'title' => 'required',
-            'body' => 'required'
+            'title' => 'required|max:255',
+            'body' => 'required',
+            'path_img' => 'image'
         ];
     }
 }
