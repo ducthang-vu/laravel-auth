@@ -61,13 +61,13 @@ class PostController extends Controller
         $saved = $newPost->save();
 
         if($saved) {
-            Mail::to('user@text.it')->send(new NewPost());
+            Mail::to('user@text.it')->send(new NewPost($newPost));
             return redirect()->route('admin.posts.show', $newPost->id);
         }
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified resource.x
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
