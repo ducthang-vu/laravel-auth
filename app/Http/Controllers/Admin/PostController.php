@@ -8,6 +8,8 @@ use App\Post;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NewPost;
 
 
 class PostController extends Controller
@@ -59,6 +61,7 @@ class PostController extends Controller
         $saved = $newPost->save();
 
         if($saved) {
+            Mail::to('user@text.it')->send(new NewPost());
             return redirect()->route('admin.posts.show', $newPost->id);
         }
     }
@@ -97,8 +100,18 @@ class PostController extends Controller
         $request->validate($this->validationRules());
 
         $data = $request->all();
-
         $data['slug'] = Str::slug($data['title'], '-');
+
+        if(!empty($data['path_img'])){
+            if (!empty($post->path_img)) {
+                Storage::disk('public')->delete($post->path_img);
+            }
+
+            $data['data_img'] = Storage::disk('public')->put('images', $data['path_img']);
+        }
+
+
+
         $updated = $post->update($data);
 
         if($updated) {
@@ -112,9 +125,22 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        //
+        if(empty($post)) {
+            abort('404');
+        }
+
+
+        $title = $post->title;
+
+        $deleted = $post->delete();
+        if($deleted) {
+            if(!empty($post->path_img)) {
+                Storage::disk('pyublic')->delete($post->path_img);
+            }
+            return redirect()->route('admin.posts')->with('post_deleted', $title);
+        }
     }
 
     private function validationRules(){

@@ -3,8 +3,8 @@
 @section('content')
     <div class="container">
         <h1>Edit {{ $post->title }}</h1>
-        
-        <form action="{{ route('admin.posts.update', $post->id) }}" method="POST">  
+
+        <form action="{{ route('admin.posts.update', $post->id) }}" method="POST">
             @csrf
             @method('PATCH')
 
@@ -15,6 +15,13 @@
             <div class="form-group">
                 <label for="body">Poste</label>
                 <textarea class="form-control" type="text" name="body" id="body">{{ old('body', $post->body) }}</textarea>
+            </div>
+            <div class="form-group">
+                <label class="d-block" for="path_id">Load image:</label>
+                @isset($post->path_id)
+                    <img src="{{ asset('storage/') . $post->path_img}}" alt="" width="200">
+                @endisset
+                <input id="path_id" name="path_id" type="file" id="img" accept="image/*">
             </div>
             <input type="submit" value="Edit">
         </form>
